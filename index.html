@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>BED / EQD2 計算ツール（放射線治療）</title>
+  <title>BED / EQD2 Calculator</title>
   <link rel="manifest" href="manifest.json">
   <meta name="theme-color" content="#1a3a5c">
   <meta name="mobile-web-app-capable" content="yes">
@@ -26,9 +26,35 @@
       color: white;
       padding: 28px 24px 22px;
       text-align: center;
+      position: relative;
     }
     header h1 { font-size: 1.5rem; font-weight: 700; margin-bottom: 6px; }
     header p  { font-size: 0.82rem; opacity: 0.85; }
+
+    /* Language toggle */
+    .lang-toggle {
+      position: absolute;
+      top: 14px;
+      right: 14px;
+      display: flex;
+      gap: 4px;
+    }
+    .lang-btn {
+      padding: 4px 11px;
+      border: 1.5px solid rgba(255,255,255,0.5);
+      border-radius: 99px;
+      background: transparent;
+      color: rgba(255,255,255,0.7);
+      font-size: 0.78rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+    .lang-btn.active {
+      background: white;
+      color: #1a3a5c;
+      border-color: white;
+    }
 
     .container { max-width: 900px; margin: 0 auto; padding: 24px 16px 48px; }
 
@@ -306,6 +332,24 @@
     .ab-row-sm .ab-btn { font-size: 0.72rem; padding: 3px 8px; }
     .ab-row-sm .ab-custom-wrap input { width: 52px; font-size: 0.72rem; padding: 3px 5px; }
 
+    /* Disclaimer */
+    .disclaimer-box {
+      background: #fff5f5;
+      border-left: 4px solid #e53e3e;
+      border-radius: 6px;
+      padding: 12px 16px;
+      margin-top: 20px;
+      font-size: 0.76rem;
+      color: #742a2a;
+      line-height: 1.7;
+    }
+    .disclaimer-box strong {
+      display: block;
+      font-size: 0.8rem;
+      margin-bottom: 4px;
+      color: #c53030;
+    }
+
     footer {
       background: #2d3748;
       color: #a0aec0;
@@ -314,13 +358,24 @@
       font-size: 0.75rem;
       line-height: 1.8;
     }
+    footer .footer-disclaimer {
+      margin-top: 10px;
+      padding-top: 10px;
+      border-top: 1px solid #4a5568;
+      color: #718096;
+      font-size: 0.72rem;
+    }
   </style>
 </head>
 <body>
 
 <header>
-  <h1>BED / EQD2 計算ツール（放射線治療）</h1>
-  <p>Linear-Quadratic モデルに基づく生物学的等価線量計算</p>
+  <div class="lang-toggle">
+    <button class="lang-btn active" onclick="setLang('jp')">JP</button>
+    <button class="lang-btn" onclick="setLang('en')">EN</button>
+  </div>
+  <h1 data-i18n="title">BED / EQD2 計算ツール（放射線治療）</h1>
+  <p data-i18n="subtitle">Linear-Quadratic モデルに基づく生物学的等価線量計算</p>
 </header>
 
 <div class="container">
@@ -329,18 +384,18 @@
   <div class="card">
     <div class="card-title">
       <span class="section-num">1</span>
-      基本計算
+      <span data-i18n="sec1">基本計算</span>
     </div>
 
     <!-- α/β -->
     <div class="ab-row" id="basic-ab-row">
       <span class="ab-label">α/β (Gy)：</span>
-      <button class="ab-btn" onclick="setAB('basic',10,this)">腫瘍 (10)</button>
-      <button class="ab-btn" onclick="setAB('basic',3,this)">晩期組織 (3)</button>
-      <button class="ab-btn" onclick="setAB('basic',1.5,this)">前立腺 (1.5)</button>
-      <button class="ab-btn" onclick="setAB('basic',4,this)">乳癌 (4)</button>
+      <button class="ab-btn" data-i18n="btn_tumor" onclick="setAB('basic',10,this)">腫瘍 (10)</button>
+      <button class="ab-btn" data-i18n="btn_late" onclick="setAB('basic',3,this)">晩期組織 (3)</button>
+      <button class="ab-btn" data-i18n="btn_prostate" onclick="setAB('basic',1.5,this)">前立腺 (1.5)</button>
+      <button class="ab-btn" data-i18n="btn_breast" onclick="setAB('basic',4,this)">乳癌 (4)</button>
       <div class="ab-custom-wrap">
-        <input type="number" id="basic-ab-custom" placeholder="カスタム" step="0.1" min="0.1"
+        <input type="number" id="basic-ab-custom" data-i18n-placeholder="custom_ph" placeholder="カスタム" step="0.1" min="0.1"
                oninput="setABCustom('basic',this.value)">
         <span>Gy</span>
       </div>
@@ -349,22 +404,22 @@
     <!-- 3 inputs -->
     <div class="input-row">
       <div class="field-group">
-        <label>総線量 D (Gy)</label>
-        <input type="number" id="basic-D" placeholder="例: 70" step="0.1" min="0"
+        <label data-i18n="lbl_D">総線量 D (Gy)</label>
+        <input type="number" id="basic-D" data-i18n-placeholder="ph_D" placeholder="例: 70" step="0.1" min="0"
                oninput="onFieldInput('basic','D')">
-        <span class="calc-badge" id="basic-D-badge">計算値</span>
+        <span class="calc-badge" id="basic-D-badge" data-i18n="calcval">計算値</span>
       </div>
       <div class="field-group">
-        <label>1回線量 d (Gy)</label>
-        <input type="number" id="basic-d" placeholder="例: 2.0" step="0.01" min="0"
+        <label data-i18n="lbl_d">1回線量 d (Gy)</label>
+        <input type="number" id="basic-d" data-i18n-placeholder="ph_d" placeholder="例: 2.0" step="0.01" min="0"
                oninput="onFieldInput('basic','d')">
-        <span class="calc-badge" id="basic-d-badge">計算値</span>
+        <span class="calc-badge" id="basic-d-badge" data-i18n="calcval">計算値</span>
       </div>
       <div class="field-group">
-        <label>分割回数 n</label>
-        <input type="number" id="basic-n" placeholder="例: 35" step="1" min="1"
+        <label data-i18n="lbl_n">分割回数 n</label>
+        <input type="number" id="basic-n" data-i18n-placeholder="ph_n" placeholder="例: 35" step="1" min="1"
                oninput="onFieldInput('basic','n')">
-        <span class="calc-badge" id="basic-n-badge">計算値</span>
+        <span class="calc-badge" id="basic-n-badge" data-i18n="calcval">計算値</span>
       </div>
     </div>
 
@@ -372,12 +427,12 @@
     <div class="result-row">
       <div class="result-box bed">
         <div class="rlabel">BED</div>
-        <div class="rval" id="basic-BED">—<span class="runit"></span></div>
+        <div class="rval" id="basic-BED">—</div>
         <div style="font-size:0.72rem;color:#a0aec0;margin-top:4px">Biological Effective Dose</div>
       </div>
       <div class="result-box eqd2">
         <div class="rlabel">EQD2</div>
-        <div class="rval" id="basic-EQD2">—<span class="runit"></span></div>
+        <div class="rval" id="basic-EQD2">—</div>
         <div style="font-size:0.72rem;color:#a0aec0;margin-top:4px">Equivalent Dose in 2 Gy fractions</div>
       </div>
     </div>
@@ -390,13 +445,13 @@
   <div class="card">
     <div class="card-title">
       <span class="section-num">2</span>
-      レジメン比較
+      <span data-i18n="sec2">レジメン比較</span>
     </div>
 
     <div class="compare-grid">
       <!-- Panel A -->
       <div class="compare-panel panel-a">
-        <h3>レジメン A</h3>
+        <h3 data-i18n="panelA">レジメン A</h3>
         <div class="ab-row ab-row-sm" id="cmpA-ab-row">
           <span class="ab-label" style="font-size:0.72rem">α/β：</span>
           <button class="ab-btn" onclick="setAB('cmpA',10,this)">10</button>
@@ -404,26 +459,26 @@
           <button class="ab-btn" onclick="setAB('cmpA',1.5,this)">1.5</button>
           <button class="ab-btn" onclick="setAB('cmpA',4,this)">4</button>
           <div class="ab-custom-wrap">
-            <input type="number" id="cmpA-ab-custom" placeholder="他" step="0.1" min="0.1"
+            <input type="number" id="cmpA-ab-custom" data-i18n-placeholder="other_ph" placeholder="他" step="0.1" min="0.1"
                    oninput="setABCustom('cmpA',this.value)">
             <span style="font-size:0.7rem">Gy</span>
           </div>
         </div>
         <div class="cmp-inputs">
           <div class="field-group">
-            <label>総線量 D (Gy)</label>
-            <input type="number" id="cmpA-D" placeholder="例: 70" step="0.1" oninput="onFieldInput('cmpA','D')">
-            <span class="calc-badge" id="cmpA-D-badge">計算値</span>
+            <label data-i18n="lbl_D">総線量 D (Gy)</label>
+            <input type="number" id="cmpA-D" data-i18n-placeholder="ph_D_A" placeholder="例: 70" step="0.1" oninput="onFieldInput('cmpA','D')">
+            <span class="calc-badge" id="cmpA-D-badge" data-i18n="calcval">計算値</span>
           </div>
           <div class="field-group">
-            <label>1回線量 d (Gy)</label>
-            <input type="number" id="cmpA-d" placeholder="例: 2.0" step="0.01" oninput="onFieldInput('cmpA','d')">
-            <span class="calc-badge" id="cmpA-d-badge">計算値</span>
+            <label data-i18n="lbl_d">1回線量 d (Gy)</label>
+            <input type="number" id="cmpA-d" data-i18n-placeholder="ph_d_A" placeholder="例: 2.0" step="0.01" oninput="onFieldInput('cmpA','d')">
+            <span class="calc-badge" id="cmpA-d-badge" data-i18n="calcval">計算値</span>
           </div>
           <div class="field-group">
-            <label>分割回数 n</label>
-            <input type="number" id="cmpA-n" placeholder="例: 35" step="1" oninput="onFieldInput('cmpA','n')">
-            <span class="calc-badge" id="cmpA-n-badge">計算値</span>
+            <label data-i18n="lbl_n">分割回数 n</label>
+            <input type="number" id="cmpA-n" data-i18n-placeholder="ph_n_A" placeholder="例: 35" step="1" oninput="onFieldInput('cmpA','n')">
+            <span class="calc-badge" id="cmpA-n-badge" data-i18n="calcval">計算値</span>
           </div>
         </div>
         <div class="cmp-result-row">
@@ -438,7 +493,7 @@
 
       <!-- Panel B -->
       <div class="compare-panel panel-b">
-        <h3>レジメン B</h3>
+        <h3 data-i18n="panelB">レジメン B</h3>
         <div class="ab-row ab-row-sm" id="cmpB-ab-row">
           <span class="ab-label" style="font-size:0.72rem">α/β：</span>
           <button class="ab-btn" onclick="setAB('cmpB',10,this)">10</button>
@@ -446,26 +501,26 @@
           <button class="ab-btn" onclick="setAB('cmpB',1.5,this)">1.5</button>
           <button class="ab-btn" onclick="setAB('cmpB',4,this)">4</button>
           <div class="ab-custom-wrap">
-            <input type="number" id="cmpB-ab-custom" placeholder="他" step="0.1" min="0.1"
+            <input type="number" id="cmpB-ab-custom" data-i18n-placeholder="other_ph" placeholder="他" step="0.1" min="0.1"
                    oninput="setABCustom('cmpB',this.value)">
             <span style="font-size:0.7rem">Gy</span>
           </div>
         </div>
         <div class="cmp-inputs">
           <div class="field-group">
-            <label>総線量 D (Gy)</label>
-            <input type="number" id="cmpB-D" placeholder="例: 60" step="0.1" oninput="onFieldInput('cmpB','D')">
-            <span class="calc-badge" id="cmpB-D-badge">計算値</span>
+            <label data-i18n="lbl_D">総線量 D (Gy)</label>
+            <input type="number" id="cmpB-D" data-i18n-placeholder="ph_D_B" placeholder="例: 60" step="0.1" oninput="onFieldInput('cmpB','D')">
+            <span class="calc-badge" id="cmpB-D-badge" data-i18n="calcval">計算値</span>
           </div>
           <div class="field-group">
-            <label>1回線量 d (Gy)</label>
-            <input type="number" id="cmpB-d" placeholder="例: 3.0" step="0.01" oninput="onFieldInput('cmpB','d')">
-            <span class="calc-badge" id="cmpB-d-badge">計算値</span>
+            <label data-i18n="lbl_d">1回線量 d (Gy)</label>
+            <input type="number" id="cmpB-d" data-i18n-placeholder="ph_d_B" placeholder="例: 3.0" step="0.01" oninput="onFieldInput('cmpB','d')">
+            <span class="calc-badge" id="cmpB-d-badge" data-i18n="calcval">計算値</span>
           </div>
           <div class="field-group">
-            <label>分割回数 n</label>
-            <input type="number" id="cmpB-n" placeholder="例: 20" step="1" oninput="onFieldInput('cmpB','n')">
-            <span class="calc-badge" id="cmpB-n-badge">計算値</span>
+            <label data-i18n="lbl_n">分割回数 n</label>
+            <input type="number" id="cmpB-n" data-i18n-placeholder="ph_n_B" placeholder="例: 20" step="1" oninput="onFieldInput('cmpB','n')">
+            <span class="calc-badge" id="cmpB-n-badge" data-i18n="calcval">計算値</span>
           </div>
         </div>
         <div class="cmp-result-row">
@@ -482,11 +537,11 @@
     <!-- Diff bar -->
     <div class="diff-bar">
       <div class="diff-item">
-        <div class="diff-dlabel">BED差（A − B）</div>
+        <div class="diff-dlabel" data-i18n="diff_bed">BED差（A − B）</div>
         <div class="diff-dval diff-zero" id="diff-bed">—</div>
       </div>
       <div class="diff-item">
-        <div class="diff-dlabel">EQD2差（A − B）</div>
+        <div class="diff-dlabel" data-i18n="diff_eqd2">EQD2差（A − B）</div>
         <div class="diff-dval diff-zero" id="diff-eqd2">—</div>
       </div>
     </div>
@@ -497,22 +552,22 @@
     <button class="adv-toggle-btn" onclick="toggleAdv()">
       <div class="card-title" style="margin:0;padding:0;border:none;pointer-events:none">
         <span class="section-num">3</span>
-        Advanced（逆算）
+        <span data-i18n="sec3">Advanced（逆算）</span>
       </div>
       <span class="adv-chevron" id="adv-chevron">▼</span>
     </button>
 
     <div class="adv-body" id="adv-body" style="display:none">
 
-      <!-- Advanced α/β（独立） -->
+      <!-- Advanced α/β -->
       <div class="ab-row" id="adv-ab-row" style="margin-top:4px">
         <span class="ab-label">α/β (Gy)：</span>
-        <button class="ab-btn" onclick="setAB('adv',10,this)">腫瘍 (10)</button>
-        <button class="ab-btn" onclick="setAB('adv',3,this)">晩期組織 (3)</button>
-        <button class="ab-btn" onclick="setAB('adv',1.5,this)">前立腺 (1.5)</button>
-        <button class="ab-btn" onclick="setAB('adv',4,this)">乳癌 (4)</button>
+        <button class="ab-btn" data-i18n="btn_tumor" onclick="setAB('adv',10,this)">腫瘍 (10)</button>
+        <button class="ab-btn" data-i18n="btn_late" onclick="setAB('adv',3,this)">晩期組織 (3)</button>
+        <button class="ab-btn" data-i18n="btn_prostate" onclick="setAB('adv',1.5,this)">前立腺 (1.5)</button>
+        <button class="ab-btn" data-i18n="btn_breast" onclick="setAB('adv',4,this)">乳癌 (4)</button>
         <div class="ab-custom-wrap">
-          <input type="number" id="adv-ab-custom" placeholder="カスタム" step="0.1" min="0.1"
+          <input type="number" id="adv-ab-custom" data-i18n-placeholder="custom_ph" placeholder="カスタム" step="0.1" min="0.1"
                  oninput="setABCustom('adv',this.value)">
           <span>Gy</span>
         </div>
@@ -520,25 +575,25 @@
 
       <!-- 逆算① -->
       <div class="adv-section">
-        <h4>逆算①　目標 EQD2 ＋ 1回線量 → 分割回数・総線量を求める</h4>
+        <h4 data-i18n="adv1_title">逆算①　目標 EQD2 ＋ 1回線量 → 分割回数・総線量を求める</h4>
         <div class="adv-input-row">
           <div class="field-group">
-            <label>目標 EQD2 (Gy)</label>
-            <input type="number" id="adv1-eqd2" placeholder="例: 74" step="0.1" min="0">
+            <label data-i18n="lbl_target_eqd2">目標 EQD2 (Gy)</label>
+            <input type="number" id="adv1-eqd2" placeholder="74" step="0.1" min="0">
           </div>
           <div class="field-group">
-            <label>1回線量 d (Gy)</label>
-            <input type="number" id="adv1-d" placeholder="例: 2.0" step="0.01" min="0">
+            <label data-i18n="lbl_d">1回線量 d (Gy)</label>
+            <input type="number" id="adv1-d" placeholder="2.0" step="0.01" min="0">
           </div>
         </div>
-        <button class="btn-calc" onclick="calcAdv1()">計算する</button>
+        <button class="btn-calc" data-i18n="btn_calc" onclick="calcAdv1()">計算する</button>
         <div class="adv-result" id="adv1-result">
           <div class="adv-result-item">
-            <div class="adv-rlabel">分割回数 n</div>
+            <div class="adv-rlabel" data-i18n="lbl_n">分割回数 n</div>
             <div class="adv-rval" id="adv1-n">—</div>
           </div>
           <div class="adv-result-item">
-            <div class="adv-rlabel">総線量 D (Gy)</div>
+            <div class="adv-rlabel" data-i18n="lbl_D">総線量 D (Gy)</div>
             <div class="adv-rval" id="adv1-D">—</div>
           </div>
         </div>
@@ -546,31 +601,31 @@
 
       <!-- 逆算② -->
       <div class="adv-section">
-        <h4>逆算②　目標 EQD2 ＋ 分割回数 → 1回線量・総線量を求める</h4>
+        <h4 data-i18n="adv2_title">逆算②　目標 EQD2 ＋ 分割回数 → 1回線量・総線量を求める</h4>
         <div class="adv-input-row">
           <div class="field-group">
-            <label>目標 EQD2 (Gy)</label>
-            <input type="number" id="adv2-eqd2" placeholder="例: 74" step="0.1" min="0">
+            <label data-i18n="lbl_target_eqd2">目標 EQD2 (Gy)</label>
+            <input type="number" id="adv2-eqd2" placeholder="74" step="0.1" min="0">
           </div>
           <div class="field-group">
-            <label>分割回数 n</label>
-            <input type="number" id="adv2-n" placeholder="例: 28" step="1" min="1">
+            <label data-i18n="lbl_n">分割回数 n</label>
+            <input type="number" id="adv2-n" placeholder="28" step="1" min="1">
           </div>
         </div>
-        <button class="btn-calc" onclick="calcAdv2()">計算する</button>
+        <button class="btn-calc" data-i18n="btn_calc" onclick="calcAdv2()">計算する</button>
         <div class="adv-result" id="adv2-result">
           <div class="adv-result-item">
-            <div class="adv-rlabel">1回線量 d (Gy)</div>
+            <div class="adv-rlabel" data-i18n="lbl_d">1回線量 d (Gy)</div>
             <div class="adv-rval" id="adv2-d">—</div>
           </div>
           <div class="adv-result-item">
-            <div class="adv-rlabel">総線量 D (Gy)</div>
+            <div class="adv-rlabel" data-i18n="lbl_D">総線量 D (Gy)</div>
             <div class="adv-rval" id="adv2-D">—</div>
           </div>
         </div>
       </div>
 
-      <div class="warning-box">
+      <div class="warning-box" data-i18n="adv_warning">
         ※ 逆算結果は数学的な解です。実際の処方線量は物理的・臨床的制約を考慮した上で、放射線腫瘍医が判断してください。
       </div>
     </div>
@@ -579,11 +634,118 @@
 </div>
 
 <footer>
-  Linear-Quadratic モデル　BED = D × (1 + d / α/β)　　EQD2 = D × (d + α/β) / (2 + α/β)<br>
-  本ツールは参考値の提供を目的としており、実際の治療計画は放射線腫瘍医の判断のもとで行ってください。
+  <div>BED = D × (1 + d / α/β)　　　EQD2 = D × (d + α/β) / (2 + α/β)</div>
+  <div class="footer-disclaimer" data-i18n="footer_disc">
+    本ツールは参考値の提供を目的としており、実際の治療計画は放射線腫瘍医の判断のもとで行ってください。
+  </div>
 </footer>
 
 <script>
+// ============================================================
+// i18n
+// ============================================================
+let lang = 'jp';
+
+const T = {
+  jp: {
+    title:          'BED / EQD2 計算ツール（放射線治療）',
+    subtitle:       'Linear-Quadratic モデルに基づく生物学的等価線量計算',
+    sec1:           '基本計算',
+    sec2:           'レジメン比較',
+    sec3:           'Advanced（逆算）',
+    btn_tumor:      '腫瘍 (10)',
+    btn_late:       '晩期組織 (3)',
+    btn_prostate:   '前立腺 (1.5)',
+    btn_breast:     '乳癌 (4)',
+    custom_ph:      'カスタム',
+    other_ph:       '他',
+    lbl_D:          '総線量 D (Gy)',
+    lbl_d:          '1回線量 d (Gy)',
+    lbl_n:          '分割回数 n',
+    lbl_target_eqd2:'目標 EQD2 (Gy)',
+    calcval:        '計算値',
+    ph_D:           '例: 70',
+    ph_d:           '例: 2.0',
+    ph_n:           '例: 35',
+    ph_D_A:         '例: 70',
+    ph_d_A:         '例: 2.0',
+    ph_n_A:         '例: 35',
+    ph_D_B:         '例: 60',
+    ph_d_B:         '例: 3.0',
+    ph_n_B:         '例: 20',
+    panelA:         'レジメン A',
+    panelB:         'レジメン B',
+    diff_bed:       'BED差（A − B）',
+    diff_eqd2:      'EQD2差（A − B）',
+    adv1_title:     '逆算①　目標 EQD2 ＋ 1回線量 → 分割回数・総線量を求める',
+    adv2_title:     '逆算②　目標 EQD2 ＋ 分割回数 → 1回線量・総線量を求める',
+    btn_calc:       '計算する',
+    adv_warning:    '※ 逆算結果は数学的な解です。実際の処方線量は物理的・臨床的制約を考慮した上で、放射線腫瘍医が判断してください。',
+    footer_disc:    '本ツールは参考値の提供を目的としており、実際の治療計画は放射線腫瘍医の判断のもとで行ってください。',
+    alert_ab:       'α/β を選択してください。',
+    alert_adv1:     '目標EQD2と1回線量を入力してください。',
+    alert_adv2:     '目標EQD2と分割回数を入力してください。',
+    frac_suffix:    '（≈ {n} 回）',
+    per_frac:       ' Gy / 回',
+  },
+  en: {
+    title:          'BED / EQD2 Calculator (Radiation Therapy)',
+    subtitle:       'Biologically Effective Dose Calculator based on the Linear-Quadratic Model',
+    sec1:           'Basic Calculation',
+    sec2:           'Regimen Comparison',
+    sec3:           'Advanced (Reverse Calculation)',
+    btn_tumor:      'Tumor (10)',
+    btn_late:       'Late Tissue (3)',
+    btn_prostate:   'Prostate (1.5)',
+    btn_breast:     'Breast (4)',
+    custom_ph:      'Custom',
+    other_ph:       'Other',
+    lbl_D:          'Total Dose D (Gy)',
+    lbl_d:          'Dose per Fraction d (Gy)',
+    lbl_n:          'Number of Fractions n',
+    lbl_target_eqd2:'Target EQD2 (Gy)',
+    calcval:        'Calculated',
+    ph_D:           'e.g. 70',
+    ph_d:           'e.g. 2.0',
+    ph_n:           'e.g. 35',
+    ph_D_A:         'e.g. 70',
+    ph_d_A:         'e.g. 2.0',
+    ph_n_A:         'e.g. 35',
+    ph_D_B:         'e.g. 60',
+    ph_d_B:         'e.g. 3.0',
+    ph_n_B:         'e.g. 20',
+    panelA:         'Regimen A',
+    panelB:         'Regimen B',
+    diff_bed:       'BED Diff (A − B)',
+    diff_eqd2:      'EQD2 Diff (A − B)',
+    adv1_title:     'Reverse ①  Target EQD2 + Dose/Fraction → Fractions & Total Dose',
+    adv2_title:     'Reverse ②  Target EQD2 + Fractions → Dose/Fraction & Total Dose',
+    btn_calc:       'Calculate',
+    adv_warning:    '* Results are mathematical solutions. Actual prescriptions must be determined by a radiation oncologist considering physical and clinical constraints.',
+    footer_disc:    'This tool is intended for reference purposes only. All treatment planning decisions must be made by a qualified radiation oncologist.',
+    alert_ab:       'Please select an α/β value.',
+    alert_adv1:     'Please enter the target EQD2 and dose per fraction.',
+    alert_adv2:     'Please enter the target EQD2 and number of fractions.',
+    frac_suffix:    '(≈ {n} fractions)',
+    per_frac:       ' Gy / fraction',
+  }
+};
+
+function setLang(l) {
+  lang = l;
+  document.querySelectorAll('.lang-btn').forEach(b => {
+    b.classList.toggle('active', b.textContent.toLowerCase() === l);
+  });
+  document.querySelectorAll('[data-i18n]').forEach(el => {
+    const key = el.getAttribute('data-i18n');
+    if (T[l][key] !== undefined) el.innerHTML = T[l][key];
+  });
+  document.querySelectorAll('[data-i18n-placeholder]').forEach(el => {
+    const key = el.getAttribute('data-i18n-placeholder');
+    if (T[l][key] !== undefined) el.placeholder = T[l][key];
+  });
+}
+
 // ============================================================
 // State
 // ============================================================
@@ -601,10 +763,8 @@ const FIELDS = ['D', 'd', 'n'];
 // ============================================================
 function setAB(ctx, val, btn) {
   S[ctx].ab = val;
-  // Clear custom input if preset selected
   const ci = document.getElementById(ctx + '-ab-custom');
   if (ci) ci.value = '';
-  // Toggle active state
   const row = document.getElementById(ctx + '-ab-row');
   row.querySelectorAll('.ab-btn').forEach(b => b.classList.remove('active'));
   btn.classList.add('active');
@@ -625,7 +785,6 @@ function setABCustom(ctx, val) {
 // ============================================================
 function onFieldInput(ctx, field) {
   const s = S[ctx];
-  // Update lastEdited (keep max 2, most recent first)
   s.lastEdited = s.lastEdited.filter(f => f !== field);
   s.lastEdited.unshift(field);
   if (s.lastEdited.length > 2) s.lastEdited.length = 2;
@@ -638,13 +797,13 @@ function onFieldInput(ctx, field) {
 
     if (!isNaN(v1) && !isNaN(v2) && v1 > 0 && v2 > 0 && calcF) {
       let cv = null;
-      if (calcF === 'D') cv = v1 * v2;           // d*n or n*d
-      if (calcF === 'd') {                        // D/n
+      if (calcF === 'D') cv = v1 * v2;
+      if (calcF === 'd') {
         const D = f1 === 'D' ? v1 : v2;
         const n = f1 === 'n' ? v1 : v2;
         cv = D / n;
       }
-      if (calcF === 'n') {                        // D/d
+      if (calcF === 'n') {
         const D = f1 === 'D' ? v1 : v2;
         const d = f1 === 'd' ? v1 : v2;
         cv = D / d;
@@ -655,8 +814,6 @@ function onFieldInput(ctx, field) {
         getEl(ctx, calcF).value = round(cv, dec);
         getEl(ctx, calcF).classList.add('calculated');
         getBadge(ctx, calcF).style.display = 'block';
-
-        // Remove calculated style from user-edited fields
         [f1, f2].forEach(f => {
           getEl(ctx, f).classList.remove('calculated');
           getBadge(ctx, f).style.display = 'none';
@@ -664,12 +821,11 @@ function onFieldInput(ctx, field) {
       }
     }
   }
-
   recalc(ctx);
 }
 
-function getEl(ctx, field)   { return document.getElementById(ctx + '-' + field); }
-function getBadge(ctx, field){ return document.getElementById(ctx + '-' + field + '-badge'); }
+function getEl(ctx, field)    { return document.getElementById(ctx + '-' + field); }
+function getBadge(ctx, field) { return document.getElementById(ctx + '-' + field + '-badge'); }
 
 // ============================================================
 // Core math
@@ -691,7 +847,7 @@ function fmt(v, dec) {
 // Recalc dispatchers
 // ============================================================
 function recalc(ctx) {
-  if (ctx === 'basic')          calcBasic();
+  if (ctx === 'basic')                       calcBasic();
   else if (ctx === 'cmpA' || ctx === 'cmpB') calcCompare();
 }
 
@@ -735,7 +891,7 @@ function calcCompare() {
   if (okA && okB) {
     const db = bedA - bedB;
     const de = eqd2A - eqd2B;
-    diffBedEl.textContent  = (db  >= 0 ? '+' : '') + fmt(db,2)  + ' Gy';
+    diffBedEl.textContent  = (db >= 0 ? '+' : '') + fmt(db,2)  + ' Gy';
     diffEqd2El.textContent = (de >= 0 ? '+' : '') + fmt(de,2) + ' Gy';
     diffBedEl.className  = 'diff-dval ' + cls(db);
     diffEqd2El.className = 'diff-dval ' + cls(de);
@@ -768,40 +924,38 @@ function toggleAdv() {
 // Advanced reverse calc
 // ============================================================
 function getAdvAB() {
-  if (!S.adv.ab) { alert('α/β を選択してください。'); return null; }
+  if (!S.adv.ab) { alert(T[lang].alert_ab); return null; }
   return S.adv.ab;
 }
 
-// 逆算①: 目標EQD2 + d → n, D
-// n = EQD2 × (2 + ab) / (d × (d + ab))
+// Reverse ①: Target EQD2 + d → n, D
 function calcAdv1() {
-  const ab   = getAdvAB(); if (!ab) return;
+  const ab    = getAdvAB(); if (!ab) return;
   const eqd2v = parseFloat(document.getElementById('adv1-eqd2').value);
   const dv    = parseFloat(document.getElementById('adv1-d').value);
   if (isNaN(eqd2v) || isNaN(dv) || eqd2v <= 0 || dv <= 0) {
-    alert('目標EQD2と1回線量を入力してください。'); return;
+    alert(T[lang].alert_adv1); return;
   }
   const n = eqd2v * (2 + ab) / (dv * (dv + ab));
   const D = n * dv;
-  document.getElementById('adv1-n').textContent = fmt(n,2) + '（≈ ' + Math.round(n) + ' 回）';
+  const fracSuffix = T[lang].frac_suffix.replace('{n}', Math.round(n));
+  document.getElementById('adv1-n').textContent = fmt(n,2) + ' ' + fracSuffix;
   document.getElementById('adv1-D').textContent = fmt(D,2) + ' Gy';
   document.getElementById('adv1-result').style.display = 'grid';
 }
 
-// 逆算②: 目標EQD2 + n → d, D
-// n·d² + n·ab·d − EQD2·(2+ab) = 0
-// d = (−n·ab + √((n·ab)² + 4·n·EQD2·(2+ab))) / (2·n)
+// Reverse ②: Target EQD2 + n → d, D
 function calcAdv2() {
   const ab    = getAdvAB(); if (!ab) return;
   const eqd2v = parseFloat(document.getElementById('adv2-eqd2').value);
   const nv    = parseFloat(document.getElementById('adv2-n').value);
   if (isNaN(eqd2v) || isNaN(nv) || eqd2v <= 0 || nv <= 0) {
-    alert('目標EQD2と分割回数を入力してください。'); return;
+    alert(T[lang].alert_adv2); return;
   }
   const disc = Math.pow(nv * ab, 2) + 4 * nv * eqd2v * (2 + ab);
   const dv   = (-nv * ab + Math.sqrt(disc)) / (2 * nv);
   const D    = nv * dv;
-  document.getElementById('adv2-d').textContent = fmt(dv,3) + ' Gy / 回';
+  document.getElementById('adv2-d').textContent = fmt(dv,3) + T[lang].per_frac;
   document.getElementById('adv2-D').textContent = fmt(D,2)  + ' Gy';
   document.getElementById('adv2-result').style.display = 'grid';
 }
