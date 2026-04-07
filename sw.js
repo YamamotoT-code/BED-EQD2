@@ -1,9 +1,9 @@
-const CACHE = 'bed-eqd2-v1';
+const CACHE = 'bed-eqd2-v2';
 const FILES = [
-  './',
-  './index.html',
-  './manifest.json',
-  './icon.svg'
+  '/BED-EQD2/',
+  '/BED-EQD2/index.html',
+  '/BED-EQD2/manifest.json',
+  '/BED-EQD2/icon.svg'
 ];
 
 self.addEventListener('install', e => {

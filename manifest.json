@@ -1,10 +1,10 @@
 {
-  "id": "/",
+  "id": "/BED-EQD2/",
   "name": "BED / EQD2 計算ツール",
   "short_name": "BED EQD2",
   "description": "放射線治療のBED・EQD2をLinear-Quadraticモデルで計算するツール",
-  "start_url": "/",
-  "scope": "/",
+  "start_url": "/BED-EQD2/",
+  "scope": "/BED-EQD2/",
   "display": "standalone",
   "background_color": "#f0f4f8",
   "theme_color": "#1a3a5c",
