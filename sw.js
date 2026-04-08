@@ -1,4 +1,4 @@
-const CACHE = 'bed-eqd2-v3';
+const CACHE = 'bed-eqd2-v4';
 const FILES = [
   '/BED-EQD2/',
   '/BED-EQD2/index.html',
