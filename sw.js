@@ -1,4 +1,4 @@
-const CACHE = 'bed-eqd2-v4';
+const CACHE = 'bed-eqd2-v5';
 const FILES = [
   '/BED-EQD2/',
   '/BED-EQD2/index.html',
@@ -22,6 +22,9 @@ self.addEventListener('activate', e => {
 
 self.addEventListener('fetch', e => {
   e.respondWith(
-    caches.match(e.request).then(cached => cached || fetch(e.request))
+    caches.match(e.request).then(cached => {
+      if (cached) return cached;
+      return fetch(e.request).catch(() => caches.match('/BED-EQD2/index.html'));
+    })
   );
 });
